@@ -214,6 +214,20 @@ target_compile_definitions(pico_common INTERFACE
         #            DEBUG_SCANLINES
         )
 
+
+# ENABLE THIS TO INCLUDE MMFS SUPPORT ON THE RP2040 (currently Master Only)
+#
+# This adds a version of MMFS as ROM 8, and tweaks the config to use this
+# as the default filing system.
+#
+# Note: On the VGA Demo Board, gpio20/21 are used for the default UART,
+# and also for DAT1/2 on the SD Card. However, DAT1/2 are only used
+# if the SD Card is run in 4-bit mode. MMFS only uses 1-bit SPI mode.
+#
+# If you want to be very safe, then there are PCB links that can be cut
+# that isolate DAT1/2 on the SD card.
+set(INCLUDE_MMFS 1)
+
 # >>> ENABLE THIS TO GET USB SUPPORT ON THE RP2040 - however right now this interferes with video (actually it currently causes a panic)
 #set(USE_USB_KEYBOARD 1)
 
@@ -230,6 +244,12 @@ if (PICO_ON_DEVICE)
                 CFG_TUH_HID_KEYBOARD
                 USB_DPRAM_MAX=512
                 PICO_USB_HOST_INTERRUPT_ENDPOINTS=3
+                )
+    endif ()
+
+    if (INCLUDE_MMFS)
+        target_compile_definitions(spock_common INTERFACE
+                INCLUDE_MMFS
                 )
     endif ()
 
@@ -341,6 +361,7 @@ target_sources(spock_common INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/video/display.c
         ${CMAKE_CURRENT_LIST_DIR}/video/gui_stub.c
         ${CMAKE_CURRENT_LIST_DIR}/video/menu.c
+        ${CMAKE_CURRENT_LIST_DIR}/mmc/mmc.c
 )
 
 target_include_directories(spock_common INTERFACE

@@ -17,6 +17,10 @@
 #include "z80.h"
 #include "6502.h"
 
+#ifdef INCLUDE_MMFS
+#include "mmc/mmc.h"
+#endif
+
 #define CFG_SECT_LEN 20
 
 fdc_type_t fdc_type;
@@ -265,6 +269,9 @@ void model_init()
     m6502_init();
 #ifndef NO_USE_TUBE
     tube_init();
+#endif
+#ifdef INCLUDE_MMFS
+    mmc_init();
 #endif
     cmos_load(models[curmodel]);
 }

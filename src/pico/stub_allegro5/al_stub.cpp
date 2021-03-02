@@ -286,6 +286,9 @@ struct {
         {"cmos", "cmos"},
         {"tube", "none"},
         {"romsetup", "master"},
+#ifdef INCLUDE_MMFS
+        { "rom08", "mmfs" },
+#endif
 //        { "rom08", "vdfs" },
 //        {"disc0", GAME_ROOT "/bs-badappl.dsd"},
 //        {"disc0", GAME_ROOT "/bs-wave-runner-v1-1.ssd"},
