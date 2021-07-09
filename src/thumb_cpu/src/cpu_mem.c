@@ -34,6 +34,10 @@
 #include "hw_event_queue.h"
 #include "hardware/gpio.h"
 
+#ifdef INCLUDE_MMFS
+#include "mmc/mmc.h"
+#endif
+
 CU_REGISTER_DEBUG_PINS(hw_event, hw_reading, hw_writing)
 //CU_SELECT_DEBUG_PINS(hw_event)
 //CU_SELECT_DEBUG_PINS(hw_reading)
@@ -547,6 +551,10 @@ uint8_t hw_read(uint16_t addr) {
             case 0x90/8:
             case 0x98/8:
                 return non_master_fdc_read(addr);
+#ifdef INCLUDE_MMFS
+            case 0xdc/8:
+                return mmc_read(addr);
+#endif
 #endif
 #ifndef NO_USE_ADC
                 [0xc0/4] = master_only_adc_read,
@@ -796,6 +804,9 @@ static void (*sheila_write_funcs[])(uint16_t addr, uint8_t val) = {
         [0xd4/4] = master_only_adc_write,
         [0xd8/4] = master_only_adc_write,
         [0xdc/4] = master_only_adc_write,
+#endif
+#ifdef INCLUDE_MMFS
+        [0xdc/4] = mmc_write,
 #endif
 #ifndef NO_USE_TUBE
         [0xe0/4] = tube_host_write,
