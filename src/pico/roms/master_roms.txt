@@ -11,3 +11,4 @@
 !path ../../../roms
 
 mos320 = os/mos320.rom
+mmfs = mmfs/bitbang_fedc/MAMMFS.rom
