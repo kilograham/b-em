@@ -75,8 +75,21 @@ extern "C" int _al_mangled_main(int argc, char **argv);
 #include "hardware/vreg.h"
 #endif
 
+#if PICO_RP2350
+#include "hardware/structs/qmi.h"
+#endif
 void setup_clock() {
 #if PICO_ON_DEVICE && !PICO_ON_FPGA
+#if PICO_RP2350
+    uint clkdiv = 3;
+    uint rxdelay = 2;
+    hw_write_masked(
+            &qmi_hw->m[0].timing,
+            ((clkdiv << QMI_M0_TIMING_CLKDIV_LSB) & QMI_M0_TIMING_CLKDIV_BITS) |
+            ((rxdelay << QMI_M0_TIMING_RXDELAY_LSB) & QMI_M0_TIMING_RXDELAY_BITS),
+            QMI_M0_TIMING_CLKDIV_BITS | QMI_M0_TIMING_RXDELAY_BITS
+    );
+#endif
     vreg_set_voltage(VREG_VOLTAGE_1_25);
 //    set_sys_clock(1176 * MHZ, 6, 1);
 #if RUN_AT_360

@@ -83,7 +83,11 @@ function(add_spock_exe NAME GUI VER DISC_FILE ROM_FILE)
     pico_add_extra_outputs(${NAME})
     target_link_libraries(${NAME} PRIVATE spock_common ${GUI})
     if (PICO_ON_DEVICE AND NOT PICO_NO_FLASH)
-        pico_set_linker_script(${NAME} ${CMAKE_CURRENT_LIST_DIR}/memmap_b-em.ld)
+        if (PICO_RP2350)
+            pico_set_linker_script(${NAME} ${CMAKE_CURRENT_LIST_DIR}/memmap_b-em_rp2350.ld)
+        else()
+            pico_set_linker_script(${NAME} ${CMAKE_CURRENT_LIST_DIR}/memmap_b-em.ld)
+        endif()
     endif ()
     # don't need these
     pico_set_float_implementation(${NAME} none)
@@ -260,14 +264,16 @@ if (PICO_ON_DEVICE)
             PICO_BUFFER_USB_ALLOC_HACK=1
 
             PICO_STACK_SIZE=0x400
-            PICO_CORE1_STACK_SIZE=0x200 # not much going on here
+            PICO_CORE1_STACK_SIZE=0x400 # not much going on here
             PRINTF_DISABLE_SUPPORT_FLOAT
             PRINTF_DISABLE_SUPPORT_LONG_LONG
             PICO_IE_26_29_UNCHANGED_ON_RESET
             PICO_USE_OPTIMISTIC_SBRK=1
             USE_MEM_DDNOISE
             PICO_TIME_DEFAULT_ALARM_POOL_DISABLED=1
-            )
+            PICO_USE_SW_SPIN_LOCKS=0
+            #PICO_USE_STACK_GUARDS=0 # todo we can actually use these sensibly, but right now we do overflow!
+    )
 else ()
     # fixme
     target_link_libraries(pico_gui INTERFACE pico_host_timer)
@@ -327,7 +333,9 @@ if (PICO_ON_DEVICE)
         set(PICO_DEFAULT_BOOT_STAGE2_FILE "${PICO_SDK_PATH}/src/rp2_common/boot_stage2/compile_time_choice.S")
     endif()
     pico_define_boot_stage2(slower_boot2 ${PICO_DEFAULT_BOOT_STAGE2_FILE})
-    target_compile_definitions(slower_boot2 PRIVATE PICO_FLASH_SPI_CLKDIV=4)
+    if (PICO_RP2040)
+        target_compile_definitions(slower_boot2 PRIVATE PICO_FLASH_SPI_CLKDIV=4)
+    endif()
 endif()
 
 if (TARGET beeb_360)

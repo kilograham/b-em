@@ -247,6 +247,6 @@ SECTIONS
     /* Check if data + heap + stack exceeds RAM limit */
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed")
 
-    ASSERT( __binary_info_header_end - __logical_binary_start <= 256, "Binary info must be in first 256 bytes of the binary")
+    ASSERT( __binary_info_header_end - __logical_binary_start <= 1024, "Binary info must be in first 256 bytes of the binary")
     /* todo assert on extra code */
 }

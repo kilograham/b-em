@@ -45,7 +45,9 @@ const uint8_t *os;
 void mem_init() {
     log_debug("mem: mem_init");
 #if PICO_ON_DEVICE
+#if PICO_RP2040
     hw_clear_bits(&xip_ctrl_hw->ctrl, XIP_CTRL_ERR_BADWRITE_BITS);
+#endif
     g_garbage_write = (uint8_t *)XIP_NOCACHE_NOALLOC_BASE;
     g_garbage_read = g_garbage_write; // todo OK?
 #endif
