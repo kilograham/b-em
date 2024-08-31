@@ -51,6 +51,7 @@ static void force_tv_comma1_handler(struct option *option, enum option_cmd cmd, 
 //static void screen_adjust_handler(struct option *option, enum option_cmd cmd, int param);
 static void vpos_adjust_handler(struct option *option, enum option_cmd cmd, int param);
 static void reset_handler(struct option *option, enum option_cmd cmd, int param);
+static void quit_handler(struct option *option, enum option_cmd cmd, int param);
 #if X_GUI
 static void aspect_ratio_handler(struct option *option, enum option_cmd cmd, int param);
 bool xgui_paused;
@@ -154,6 +155,11 @@ struct option options[] = {
                 .txt = "Hard Reset",
                 .is_action = true,
         },
+        {
+                .handler = quit_handler,
+                .txt = "Quit",
+                .is_action = true,
+        },
 };
 
 extern bool force_tv_comma_1;
@@ -240,6 +246,12 @@ static void reset_handler(struct option *option, enum option_cmd cmd, int param)
         }
 #endif
         do_reset = true;
+    }
+}
+
+static void quit_handler(struct option *option, enum option_cmd cmd, int param) {
+    if (cmd == OPTION_EXECUTE) {
+        exit(0);
     }
 }
 
